@@ -1,0 +1,26 @@
+{# templates/participant/event_list.html #}
+{% extends 'participant/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}イベントに参加{% endblock %}
+
+{% block content %}
+    <h1>参加したいイベントを選んでください</h1>
+
+    <div class="events-container">
+        {% if events %}
+            <ul>
+                {% for event in events %}
+                    <li class="event-item">
+                        <a href="{{ url_for('participant_event_detail', event_id=event.id) }}">{{ event.name }}</a>
+                        {% if event.description %}
+                            <p>{{ event.description }}</p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>現在、参加できるイベントはありません。</p>
+        {% endif %}
+    </div>
+{% endblock %}  

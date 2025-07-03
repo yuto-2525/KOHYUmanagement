@@ -1,0 +1,68 @@
+{# templates/admin/event_detail.html #}
+{% extends 'admin/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}管理者 - {{ event.name }}{% endblock %}
+
+{% block content %}
+    <h1>管理者用: {{ event.name }}</h1>
+    {% if event.description %}
+        <p>{{ event.description }}</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_index') }}" class="back-link">← イベント一覧に戻る</a>
+
+    <hr>
+
+    <h2>参加者リスト</h2>
+    {% if participants %}
+        <ul class="participant-list">
+            {% for p in participants %}
+                <li class="participant-item {% if p.is_confirmed %}confirmed{% elif p.is_paid %}reported{% elif p.irregular_request and not p.is_irregular_resolved %}irregular{% else %}pending{% endif %}">
+                    <div class="participant-main-info">
+                        <span class="participant-name">{{ p.name }}</span>
+                        <div class="status-info">
+                            {% if p.is_confirmed %}
+                                <span class="status-confirmed">✔ 確認済</span>
+                            {% elif p.is_paid %}
+                                <span class="status-reported">報告済 ({{ p.paid_reported_at.strftime('%m/%d %H:%M') }})</span>
+                            {% else %}
+                                <span class="status-pending">未報告</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <form action="{{ url_for('admin_confirm_payment', participant_id=p.id) }}" method="post" class="inline-form">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="is_confirmed" {% if p.is_confirmed %}checked{% endif %} onchange="this.form.submit()">
+                                <span class="checkmark"></span> 振り込み確認
+                            </label>
+                        </form>
+                        
+                        {% if p.irregular_request %}
+                            <div class="irregular-section {% if not p.is_irregular_resolved %}unresolved{% endif %}">
+                                <p class="irregular-content">相談: {{ p.irregular_request }}</p>
+                                <form action="{{ url_for('admin_resolve_irregular', participant_id=p.id) }}" method="post" class="inline-form">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" name="is_irregular_resolved" {% if p.is_irregular_resolved %}checked{% endif %} onchange="this.form.submit()">
+                                        <span class="checkmark"></span> 解決済
+                                    </label>
+                                </form>
+                            </div>
+                        {% endif %}
+
+                        <div class="participant-actions-buttons">
+                            <a href="{{ url_for('admin_edit_participant', participant_id=p.id) }}" class="edit-button">編集</a>
+                            <form action="{{ url_for('admin_delete_participant', participant_id=p.id) }}" method="post" class="inline-form delete-form" onsubmit="return confirm('本当にこの参加者を削除しますか？');">
+                                <button type="submit" class="delete-button small-button">削除</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>まだ参加者はいません。</p>
+    {% endif %}
+{% endblock %}

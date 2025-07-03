@@ -1,0 +1,22 @@
+{# templates/admin/base.html #}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}管理者ページ{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% include 'macros.html' %}
+        {{ macros.render_flashes() }}
+
+        {% block content %}{% endblock %}
+
+        <hr>
+        <p class="footer-link">参加者の方はこちらへ: <a href="{{ url_for('participant_index') }}">参加者トップページ</a></p>
+    </div>
+</body>
+</html>

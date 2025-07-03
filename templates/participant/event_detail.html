@@ -1,0 +1,51 @@
+{# templates/participant/event_detail.html #}
+{% extends 'participant/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}{{ event.name }} - 参加申請・報告{% endblock %}
+
+{% block content %}
+    <h1>{{ event.name }}への参加</h1>
+    {% if event.description %}
+        <p>{{ event.description }}</p>
+    {% endif %}
+
+    <a href="{{ url_for('participant_index') }}" class="back-link">← イベント一覧に戻る</a>
+
+    <hr>
+
+    <h2>参加申請</h2>
+    <form action="{{ url_for('participant_apply', event_id=event.id) }}" method="post" class="form-section">
+        <label for="participant_name">お名前:</label>
+        <input type="text" id="participant_name" name="participant_name" required>
+        <button type="submit" class="submit-button">申請する</button>
+    </form>
+
+    <hr>
+
+    <h2>振り込み報告</h2>
+    <p>参加費の振り込みが完了したら、こちらからご報告ください。</p>
+    <form action="{{ url_for('participant_report_payment', event_id=event.id) }}" method="post" class="form-section">
+        <label for="participant_name_for_report">お名前 (申請時と同じ名前):</label>
+        <input type="text" id="participant_name_for_report" name="participant_name_for_report" required>
+        <button type="submit" class="submit-button">振り込みを報告する</button>
+    </form>
+
+    <hr>
+
+    <h2>イレギュラーな相談</h2>
+    <p>振り込みが遅れる場合や、その他特別な相談がある場合はこちら。</p>
+    <form action="{{ url_for('participant_irregular_request', event_id=event.id) }}" method="post" class="form-section">
+        <label for="participant_name_for_irregular">お名前 (申請時と同じ名前):</label>
+        <input type="text" id="participant_name_for_irregular" name="participant_name_for_irregular" required>
+        <label for="request_content">相談内容:</label>
+        <textarea id="request_content" name="request_content" rows="4" required></textarea>
+        <button type="submit" class="submit-button">相談を送信する</button>
+    </form>
+
+    <hr>
+
+    <h2>自分の参加状況を確認</h2>
+    <p>申請したイベントでのご自身の状況を確認できます。</p>
+    <p><a href="{{ url_for('participant_my_status', event_id=event.id) }}" class="button-link">ステータスを確認する</a></p>
+{% endblock %}

@@ -1,0 +1,42 @@
+{# templates/admin/edit_participant.html #}
+{% extends 'admin/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}管理者 - 参加者編集: {{ participant.name }}{% endblock %}
+
+{% block content %}
+    <h1>参加者編集: {{ participant.name }} (イベント: {{ participant.event.name }})</h1>
+    <a href="{{ url_for('admin_event_detail', event_id=participant.event_id) }}" class="back-link">← 参加者リストに戻る</a>
+
+    <hr>
+
+    <form action="{{ url_for('admin_edit_participant', participant_id=participant.id) }}" method="post" class="form-section">
+        <label for="participant_name">名前:</label>
+        <input type="text" id="participant_name" name="participant_name" value="{{ participant.name }}" required>
+        <br>
+
+        <label class="checkbox-container">
+            <input type="checkbox" name="is_paid" {% if participant.is_paid %}checked{% endif %}>
+            <span class="checkmark"></span> 支払済み
+        </label>
+        <br>
+
+        <label class="checkbox-container">
+            <input type="checkbox" name="is_confirmed" {% if participant.is_confirmed %}checked{% endif %}>
+            <span class="checkmark"></span> 振り込み確認済み
+        </label>
+        <br>
+
+        <label for="irregular_request">イレギュラー相談内容:</label>
+        <textarea id="irregular_request" name="irregular_request" rows="5">{{ participant.irregular_request or '' }}</textarea>
+        <br>
+
+        <label class="checkbox-container">
+            <input type="checkbox" name="is_irregular_resolved" {% if participant.is_irregular_resolved %}checked{% endif %}>
+            <span class="checkmark"></span> イレギュラー相談解決済み
+        </label>
+        <br>
+        
+        <button type="submit" class="submit-button">更新する</button>
+    </form>
+{% endblock %}

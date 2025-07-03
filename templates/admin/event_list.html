@@ -1,0 +1,50 @@
+{# templates/admin/event_list.html #}
+{% extends 'admin/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}管理者 - イベント一覧{% endblock %}
+
+{% block content %}
+    <h1>管理者用: イベント一覧</h1>
+
+    <a href="{{ url_for('admin_logout') }}" class="button-link logout-button">ログアウト</a>
+
+    <hr>
+    <h2>新しいイベントを作成</h2>
+    <form action="{{ url_for('admin_create_event') }}" method="post" class="form-section">
+        <label for="event_name">イベント名:</label>
+        <input type="text" id="event_name" name="event_name" required>
+        <br>
+        <label for="event_description">説明 (任意):</label>
+        <textarea id="event_description" name="event_description" rows="3"></textarea>
+        <br>
+        <button type="submit" class="submit-button">イベントを作成</button>
+    </form>
+
+    <hr>
+    <h2>既存のイベント</h2>
+    <div class="events-container">
+        {% if events %}
+            <ul>
+                {% for event in events %}
+                    <li class="event-item">
+                        <div class="event-info">
+                            <a href="{{ url_for('admin_event_detail', event_id=event.id) }}">{{ event.name }}</a>
+                            {% if event.description %}
+                                <p>{{ event.description }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="event-actions">
+                            <a href="{{ url_for('admin_edit_event', event_id=event.id) }}" class="edit-button">編集</a>
+                            <form action="{{ url_for('admin_delete_event', event_id=event.id) }}" method="post" class="inline-form delete-form" onsubmit="return confirm('本当にこのイベントとその全ての参加者を削除しますか？');">
+                                <button type="submit" class="delete-button">削除</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>まだイベントがありません。</p>
+        {% endif %}
+    </div>
+{% endblock %}

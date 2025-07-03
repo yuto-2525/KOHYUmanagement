@@ -1,0 +1,55 @@
+{# templates/participant/my_status.html #}
+{% extends 'participant/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block title %}{{ event.name }} - 自分のステータス{% endblock %}
+
+{% block content %}
+    <h1>{{ event.name }} - 自分のステータス確認</h1>
+    {% if event.description %}
+        <p>{{ event.description }}</p>
+    {% endif %}
+
+    <a href="{{ url_for('participant_event_detail', event_id=event.id) }}" class="back-link">← イベント詳細に戻る</a>
+
+    <hr>
+
+    <h2>お名前で検索</h2>
+    <form action="{{ url_for('participant_my_status', event_id=event.id) }}" method="post" class="form-section">
+        <label for="query_name">お名前 (申請時と同じ名前):</label>
+        <input type="text" id="query_name" name="query_name" required>
+        <button type="submit" class="submit-button">検索する</button>
+    </form>
+
+    {% if participant_info %}
+        <div class="status-display">
+            <h3>{{ participant_info.name }}様のステータス</h3>
+            <p>
+                <strong>参加費用:</strong> 
+                {% if participant_info.is_confirmed %}
+                    <span class="status-confirmed">✔ 確認済み</span>
+                {% elif participant_info.is_paid %}
+                    <span class="status-reported">報告済み ({{ participant_info.paid_reported_at.strftime('%Y/%m/%d %H:%M') }})</span>
+                {% else %}
+                    <span class="status-pending">未報告</span>
+                {% endif %}
+            </p>
+
+            {% if participant_info.irregular_request %}
+                <p>
+                    <strong>イレギュラー相談:</strong> 
+                    <span class="irregular-status-text {% if not participant_info.is_irregular_resolved %}unresolved{% endif %}">
+                        {{ participant_info.irregular_request }}
+                    </span>
+                    {% if participant_info.is_irregular_resolved %}
+                        <span class="status-confirmed">(解決済み)</span>
+                    {% else %}
+                        <span class="status-pending">(未解決)</span>
+                    {% endif %}
+                </p>
+            {% else %}
+                <p><strong>イレギュラー相談:</strong> なし</p>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
